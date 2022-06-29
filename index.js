@@ -66,11 +66,21 @@ app.post('/api/persons', (request, response) => {
   console.log(request.headers)
   console.log(request.body)
 
-  const person = request.body
-  person.id = Math.floor(Math.random() * 1000)
-  persons = persons.concat(person)
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'name or number is missing'
+    })
+  } else if (persons.map(person => person.name).includes(body.name)) {
+    return response.status(403).json({
+      error: 'name must be unique'
+    })
+  } else {
+      const person = request.body
+      person.id = Math.floor(Math.random() * 1000)
+      persons = persons.concat(person)
 
-  response.json(person)
+      response.json(person)
+  }
 })
 
 
