@@ -2,12 +2,15 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
 
+app.use(cors())
 morgan.token('body', (request) => {
   return JSON.stringify(request.body)
 })
 
 app.use(express.json())
+app.use(express.static('build'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 //morgan('default')
 
