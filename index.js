@@ -1,6 +1,8 @@
+require('dotenv').config()
 //const http = require('http')
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
 const morgan = require('morgan')
 const cors = require('cors')
 
@@ -14,28 +16,28 @@ app.use(express.static('build'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 //morgan('default')
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+//let persons = [
+    //{ 
+      //"id": 1,
+      //"name": "Arto Hellas", 
+      //"number": "040-123456"
+    //},
+    //{ 
+      //"id": 2,
+      //"name": "Ada Lovelace", 
+      //"number": "39-44-5323523"
+    //},
+    //{ 
+      //"id": 3,
+      //"name": "Dan Abramov", 
+      //"number": "12-43-234345"
+    //},
+    //{ 
+      //"id": 4,
+      //"name": "Mary Poppendieck", 
+      //"number": "39-23-6423122"
+    //}
+//]
 
 //const app = http.createServer((request, response) => {
   //response.writeHead(200, { 'Content-Type': 'application/json' })
@@ -45,7 +47,10 @@ let persons = [
 app.get('/api/persons', (request, response) => {
   console.log('API called')
   //response.send('<h1>Hello world</h1>') 
-  response.json(persons)
+  //response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/info', (request, response) => {

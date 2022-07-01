@@ -32,9 +32,10 @@ if (process.argv.length < 4) {
   Person
     .find({})
     .then(result => {
-    result.forEach(person => {
-      console.log(person)
-    })
+      console.log('phonebook:')
+      result.forEach(person => {
+        console.log(person.name, person.number)
+      })
     mongoose.connection.close()
     console.log('connection closed')
     })
