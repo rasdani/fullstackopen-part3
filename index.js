@@ -17,30 +17,6 @@ morgan.token('response', (response) => {
 app.use(express.json())
 app.use(express.static('build'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body :response'))
-//morgan('default')
-
-//let persons = [
-    //{ 
-      //"id": 1,
-      //"name": "Arto Hellas", 
-      //"number": "040-123456"
-    //},
-    //{ 
-      //"id": 2,
-      //"name": "Ada Lovelace", 
-      //"number": "39-44-5323523"
-    //},
-    //{ 
-      //"id": 3,
-      //"name": "Dan Abramov", 
-      //"number": "12-43-234345"
-    //},
-    //{ 
-      //"id": 4,
-      //"name": "Mary Poppendieck", 
-      //"number": "39-23-6423122"
-    //}
-//]
 
 //const app = http.createServer((request, response) => {
   //response.writeHead(200, { 'Content-Type': 'application/json' })
@@ -57,8 +33,8 @@ app.get('/api/persons', (request, response) => {
 app.get('/info', (request, response, next) => {
   const date = new Date()
   Person.countDocuments({}).then(count => {
-      response.send(`Phonebook has info for ${count} people <p>${date}</p>`)
-    }).catch(error => next(error))
+    response.send(`Phonebook has info for ${count} people <p>${date}</p>`)
+  }).catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -73,12 +49,12 @@ app.get('/api/persons/:id', (request, response, next) => {
   Person
     .findById(request.params.id)
     .then(person => {
-    if (person) {
-      response.json(person)
-    } else {
-      response.status(404).end()
-    }
-  })
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
     //.catch(error => {
       //console.log(error)
       //response.status(400).send({ error: 'malformatted id'})
@@ -86,7 +62,7 @@ app.get('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   //const id = Number(request.params.id)
   //persons = persons.filter(person => person.id !== id)
 
@@ -114,35 +90,33 @@ app.post('/api/persons', (request, response, next) => {
       //const person = request.body
       //person.id = Math.floor(Math.random() * 1000)
       //persons = persons.concat(person)
-
-      //response.json(person)
-     
+      //response.json(person) 
       //Person.find({name: body.name}).then(persons => {
         //console.log(response.json(persons))
         ////response.json(persons)
         //console.log(persons)
       //})
 
-      Person.findOne({name: body.name}).then(persons => {
-        //console.log(body.name)
-        //console.log(persons)
-        //console.log(persons == true)
-        //truthiness behaving weirdly
-        if (persons !== null) {
-          return response.status(400).json({
-            error: `${body.name} already in phonebook, use PUT to update number`})
-        } else {
-          const person = new Person({
-            name: body.name,
-            number: body.number,
-          })
+    Person.findOne({ name: body.name }).then(persons => {
+    //console.log(body.name)
+    //console.log(persons)
+    //console.log(persons == true)
+    //truthiness behaving weirdly
+      if (persons !== null) {
+        return response.status(400).json({
+          error: `${body.name} already in phonebook, use PUT to update number` })
+      } else {
+        const person = new Person({
+          name: body.name,
+          number: body.number,
+        })
 
         person.save().then(savedPerson => {
           response.json(savedPerson)
         })
-        .catch(error => next(error))
-        }
-      })
+          .catch(error => next(error))
+      }
+    })
   }
 })
 
@@ -156,7 +130,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 
   Person.findByIdAndUpdate(
     request.params.id,
-    person, 
+    person,
     { new: true, runValidators: true, context: 'query' }
   )
     .then(updatedPerson => {
@@ -180,7 +154,7 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     console.log('VALIDATION ERROR', error.message)
-    return response.status(400).json({ error: error.message})
+    return response.status(400).json({ error: error.message })
     //throw new Error('TEST ERROR')
   }
 
