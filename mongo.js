@@ -14,7 +14,7 @@ const number = process.argv[4]
 const url = `mongodb+srv://rasdani:${password}@cluster0.9pr8gg4.mongodb.net/noteApp?retryWrites=true&w=majority`
 
 const personSchema = new mongoose.Schema({
-  name: String, 
+  name: String,
   number: String,
 })
 
@@ -36,8 +36,8 @@ if (process.argv.length < 4) {
       result.forEach(person => {
         console.log(person.name, person.number)
       })
-    mongoose.connection.close()
-    console.log('connection closed')
+      mongoose.connection.close()
+      console.log('connection closed')
     })
 } else {
   mongoose
@@ -52,11 +52,11 @@ if (process.argv.length < 4) {
 
       return person.save()
     })
-      .then(() => {
-        console.log(`added ${name} number ${number} to phonebook`)
-        return mongoose.connection.close()
-      })
-      .catch((err) => console.log(err))
+    .then(() => {
+      console.log(`added ${name} number ${number} to phonebook`)
+      return mongoose.connection.close()
+    })
+    .catch((err) => console.log(err))
 }
 
 //mongoose

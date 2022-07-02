@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import Person from './components/Person'
-import AllPersons from './components/AllPersons'
+//import Person from './components/Person'
+//import AllPersons from './components/AllPersons'
 import Search from './components/Search'
 import Notification from './components/Notification'
 import personsService from './services/persons'
