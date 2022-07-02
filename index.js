@@ -54,16 +54,11 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
   const date = new Date()
-  Person.countDocuments({}, (error, count) => {
-    if (error) {
-      console.log(error)
-      next(error)
-    } else {
+  Person.countDocuments({}).then(count => {
       response.send(`Phonebook has info for ${count} people <p>${date}</p>`)
-    }
-  })
+    }).catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -103,7 +98,7 @@ app.delete('/api/persons/:id', (request, response) => {
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name || !body.number) {
@@ -128,6 +123,7 @@ app.post('/api/persons', (request, response) => {
     person.save().then(savedPerson => {
       response.json(savedPerson)
     })
+    .catch(error => next(error))
   }
 })
 
@@ -155,10 +151,14 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
-  console.log(error.message)
+  console.log('ERROR HANDLER', error.message)
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    console.log('VALIDATION ERROR', error.message)
+    return response.status(400).json({ error: error.message})
+    //throw new Error('TEST ERROR')
   }
 
   next(error)
