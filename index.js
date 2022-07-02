@@ -91,7 +91,8 @@ app.delete('/api/persons/:id', (request, response) => {
   //persons = persons.filter(person => person.id !== id)
 
   //response.status(204).end()
-  Person.findByIdAndRemove(mongoose.Types.ObjectId(request.params.id))
+  //Person.findByIdAndRemove(mongoose.Types.ObjectId(request.params.id))
+  Person.findByIdAndRemove(request.params.id)
     .then(result => {
       response.status(204).end()
     })
@@ -115,15 +116,33 @@ app.post('/api/persons', (request, response, next) => {
       //persons = persons.concat(person)
 
       //response.json(person)
-      const person = new Person({
-        name: body.name,
-        number: body.number,
-      })
+     
+      //Person.find({name: body.name}).then(persons => {
+        //console.log(response.json(persons))
+        ////response.json(persons)
+        //console.log(persons)
+      //})
 
-    person.save().then(savedPerson => {
-      response.json(savedPerson)
-    })
-    .catch(error => next(error))
+      Person.findOne({name: body.name}).then(persons => {
+        //console.log(body.name)
+        //console.log(persons)
+        //console.log(persons == true)
+        //truthiness behaving weirdly
+        if (persons !== null) {
+          return response.status(400).json({
+            error: `${body.name} already in phonebook, use PUT to update number`})
+        } else {
+          const person = new Person({
+            name: body.name,
+            number: body.number,
+          })
+
+        person.save().then(savedPerson => {
+          response.json(savedPerson)
+        })
+        .catch(error => next(error))
+        }
+      })
   }
 })
 
@@ -135,7 +154,11 @@ app.put('/api/persons/:id', (request, response, next) => {
     number: body.number,
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(
+    request.params.id,
+    person, 
+    { new: true, runValidators: true, context: 'query' }
+  )
     .then(updatedPerson => {
       response.json(updatedPerson)
     })

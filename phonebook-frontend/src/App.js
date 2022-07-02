@@ -71,7 +71,7 @@ const App = () => {
           .catch(error => {
             console.log(error)
             setNotificationType('error')
-            setNotificationMessage(`Information for ${newName} has already been removed from server`)
+            setNotificationMessage(error.response.data.error)
             setTimeout(() => {
               setNotificationMessage(null)
               setNotificationType('succesful')
